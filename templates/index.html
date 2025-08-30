@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+        <link rel="stylesheet" href="style.css" />
+<style>
+    table {
+        border: 0px solid black;
+        position: absolute;
+        top: 30%;
+        right: 38%;
+    }
+    td {
+        border: 3px solid black;
+    }
+    button {
+        border-radius: 12px;
+        border: 3px outset #888;
+        position: relative;
+        display: inline-block;
+        padding: 15px 30px;
+        color: #eee;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        overflow: hidden;
+
+        box-shadow: 0 0 10px rgb(0, 0, 0, 1);
+        font-family: verdana;
+        font-size: 28px;
+        font-weight: bolder;
+        text-decoration: none;
+        background:linear-gradient(160deg, #666, #444);
+        text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+        transition: 0.2s;
+    }
+    
+</style>
+</head>
+<body>
+
+
+    <table border="20" cellpadding="20" cellspacing ="25px">
+        <tr>
+            <td>
+            <p> 
+            &nbsp;
+            <big>
+                <h2 style="font-family: 'Arial';" class="mt-4 text-center">Amount:</h2>
+                <h3 style="font-family: 'Arial';" class="mt-4 text-center" id="coins">{{ core.coins }}</h3>
+            
+                <p>Монеты: <span class="coins-display" id="coins">{{ core.coins }}</span> 🪙</p>
+                <p>Сила клика: <span id="click-power">{{ core.click_power }}</span> ⚡</p>
+            </big>
+            &nbsp;
+        </p>
+        <p> 
+            &nbsp;
+            <big>
+            <button class="click-button" id="click-button">КЛИКНУТЬ!</button>
+            <button class="click-button" id="-button">Save</button>
+            </big>
+            &nbsp;
+        </p>
+    </td>
+    </tr>
+    </table>
+    
+
+    <script>
+        function sendAction(actionType) {
+        const formData = new FormData();
+        formData.append('action', actionType);
+        formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+        
+        fetch('', {  // Пустая строка = текущий URL
+            method: 'POST',
+            body: formData,
+        })
+        .then(data => {
+            // Анимация кнопки
+            clickButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                clickButton.style.transform = 'scale(1)';
+            }, 100);
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.action === 'click') {
+                tempCoinsElement.textContent = data.temporary_coins;
+                coinsElement.textContent = data.coins;
+                powerElement.textContent = data.click_power;
+            } else if (data.action === 'save') {
+                coinsElement.textContent = data.coins;
+                tempCoinsElement.textContent = data.temporary_coins;
+                powerElement.textContent = data.click_power;
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
+    }
+    
+    // Обработчики кнопок
+    clickButton.addEventListener('click', function() {
+        sendAction('click');
+    });
+    
+    saveButton.addEventListener('click', function() {
+        sendAction('save');
+    });
+    });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
