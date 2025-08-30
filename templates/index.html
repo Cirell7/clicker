@@ -69,53 +69,37 @@
     
 
     <script>
-        function sendAction(actionType) {
-        const formData = new FormData();
-        formData.append('action', actionType);
-        formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
-        
-        fetch('', {  // Пустая строка = текущий URL
-            method: 'POST',
-            body: formData,
-        })
-        .then(data => {
-            // Анимация кнопки
-            clickButton.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                clickButton.style.transform = 'scale(1)';
-            }, 100);
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.action === 'click') {
-                tempCoinsElement.textContent = data.temporary_coins;
-                coinsElement.textContent = data.coins;
-                powerElement.textContent = data.click_power;
-            } else if (data.action === 'save') {
-                coinsElement.textContent = data.coins;
-                tempCoinsElement.textContent = data.temporary_coins;
-                powerElement.textContent = data.click_power;
-            }
-        })
-        .catch(error => console.error('Ошибка:', error));
-    }
-    
-    // Обработчики кнопок
-    clickButton.addEventListener('click', function() {
-        sendAction('click');
-    });
-    
-    saveButton.addEventListener('click', function() {
-        sendAction('save');
-    });
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            const clickButton = document.getElementById('click-button');
+            const coinsElement = document.getElementById('coins');
+            const powerElement = document.getElementById('click-power');
+            
+            clickButton.addEventListener('click', function() {
+                // Отправляем POST запрос на тот же URL
+                fetch('', {  // пустая строка = текущий URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    // Обновляем данные на странице
+                    coinsElement.textContent = data.coins;
+                    powerElement.textContent = data.click_power;
+                    
+                    // Анимация кнопки
+                    clickButton.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        clickButton.style.transform = 'scale(1)';
+                    }, 100);
+                })
+            });
+        });
     </script>
 </body>
 </html>
-
-
-
-
-
-
 

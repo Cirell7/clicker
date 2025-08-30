@@ -11,16 +11,8 @@ def create_default_core(sender, **kwargs):
 
 class Core(models.Model):
     coins = models.IntegerField(default=0)
-    temporary_coins =models.IntegerField(default=0)
     click_power = models.IntegerField(default=1)
     def click(self):
-        self.temporary_coins+=self.click_power
+        self.coins += self.click_power
         self.save()
-    def get_temporary_coins(self):
-        return self.temporary_coins
-    def get_coins(self):
         return self.coins
-    def get_click_power(self):
-        return self.click_power
-    def core_save(self):
-        self.coins = self.temporary_coins

@@ -7,20 +7,16 @@ from .models import Core
 @csrf_exempt  # временно для упрощения
 def index(request):
     core = Core.objects.first()
+
     if not core:
         core = Core.objects.create()
+    
 
     if request.method == 'POST':
-        action = request.POST.get('action')
-        if action == 'click':
-            core.click()
-        elif action == 'save':
-            core.save()
+        core.click()
         return JsonResponse({
-                'temporary_coins': core.get_temporary_coins(),
-                'coins': core.get_coins(),
-                'click_power': core.get_click_power(),
-                'action': 'click'
-            })
+            'coins': core.coins,
+            'click_power': core.click_power
+        })
 
     return render(request, 'index.html', {'core': core})
